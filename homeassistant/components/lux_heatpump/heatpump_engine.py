@@ -76,3 +76,15 @@ class heatpump_engine:
                 self.domestic_hot_water_temp_setpoint = float(tokens[6]) / 10
             except ValueError:
                 return
+
+    def poll_for_stats(self):
+        """Poll sensor data."""
+
+        new_time = int(time.time())
+        if new_time - self.epoch_time > 10 or self.polls == 0:
+            self.trigger_stats()
+            self.readlines()
+            self.epoch_time = new_time
+            self.polls += 1
+        else:
+            self.polls_skipped += 1
