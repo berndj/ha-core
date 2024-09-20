@@ -3481,6 +3481,12 @@
         }
       }
     },
+    "lux_heatpump": {
+      "name": "Luxtronik heatpump",
+      "integration_type": "hub",
+      "config_flow": false,
+      "iot_class": "local_polling"
+    },
     "luxaflex": {
       "name": "Luxaflex",
       "integration_type": "virtual",
