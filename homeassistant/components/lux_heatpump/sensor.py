@@ -20,12 +20,15 @@ def setup_platform(
     discovery_info: DiscoveryInfoType | None = None,
 ) -> None:
     """Set up the sensor platform."""
-    add_entities([ExampleSensor1()])
-    add_entities([ExampleSensor2()])
-    add_entities([ExampleSensor3()])
+    add_entities([HeatpumpSensor1()])
+    add_entities([HeatpumpSensor2()])
+    add_entities([HeatpumpSensor3()])
+    add_entities([HeatpumpSensor4()])
+    add_entities([HeatpumpSensor5()])
+    add_entities([HeatpumpSensor6()])
 
 
-class ExampleSensor1(SensorEntity):
+class HeatpumpSensor1(SensorEntity):
     """Representation of a Sensor."""
 
     _attr_name = "Outdoor temperature"
@@ -41,7 +44,7 @@ class ExampleSensor1(SensorEntity):
         self._attr_native_value = 23
 
 
-class ExampleSensor2(SensorEntity):
+class HeatpumpSensor2(SensorEntity):
     """Representation of a Sensor."""
 
     _attr_name = "heating circuit flow temperature"
@@ -57,10 +60,58 @@ class ExampleSensor2(SensorEntity):
         self._attr_native_value = 23
 
 
-class ExampleSensor3(SensorEntity):
+class HeatpumpSensor3(SensorEntity):
     """Representation of a Sensor."""
 
     _attr_name = "heating circuit return flow temperature (actual)"
+    _attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS
+    _attr_device_class = SensorDeviceClass.TEMPERATURE
+    _attr_state_class = SensorStateClass.MEASUREMENT
+
+    def update(self) -> None:
+        """Fetch new state data for the sensor.
+
+        This is the only method that should fetch new data for Home Assistant.
+        """
+        self._attr_native_value = 23
+
+
+class HeatpumpSensor4(SensorEntity):
+    """Representation of a Sensor."""
+
+    _attr_name = "heating circuit return flow temperature (setpoint)"
+    _attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS
+    _attr_device_class = SensorDeviceClass.TEMPERATURE
+    _attr_state_class = SensorStateClass.MEASUREMENT
+
+    def update(self) -> None:
+        """Fetch new state data for the sensor.
+
+        This is the only method that should fetch new data for Home Assistant.
+        """
+        self._attr_native_value = 23
+
+
+class HeatpumpSensor5(SensorEntity):
+    """Representation of a Sensor."""
+
+    _attr_name = "domestic hot water temperature (actual)"
+    _attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS
+    _attr_device_class = SensorDeviceClass.TEMPERATURE
+    _attr_state_class = SensorStateClass.MEASUREMENT
+
+    def update(self) -> None:
+        """Fetch new state data for the sensor.
+
+        This is the only method that should fetch new data for Home Assistant.
+        """
+        self._attr_native_value = 23
+
+
+class HeatpumpSensor6(SensorEntity):
+    """Representation of a Sensor."""
+
+    _attr_name = "domestic hot water temperature (setpoint)"
     _attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS
     _attr_device_class = SensorDeviceClass.TEMPERATURE
     _attr_state_class = SensorStateClass.MEASUREMENT
