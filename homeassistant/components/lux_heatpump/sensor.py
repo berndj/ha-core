@@ -12,6 +12,8 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
 
+from .heatpump_engine import heatpump_engine
+
 
 def setup_platform(
     hass: HomeAssistant,
@@ -31,6 +33,11 @@ def setup_platform(
 class HeatpumpSensor1(SensorEntity):
     """Representation of a Sensor."""
 
+    def __init__(self):
+        """Init sensor."""
+        self.eng = heatpump_engine()
+        self.eng.connect("baba-cafe", 4322)
+
     _attr_name = "Outdoor temperature"
     _attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS
     _attr_device_class = SensorDeviceClass.TEMPERATURE
@@ -41,7 +48,8 @@ class HeatpumpSensor1(SensorEntity):
 
         This is the only method that should fetch new data for Home Assistant.
         """
-        self._attr_native_value = 23
+        self.eng.poll_for_stats()
+        self._attr_native_value = self.eng.outdoor_temp
 
 
 class HeatpumpSensor2(SensorEntity):
@@ -109,6 +117,22 @@ class HeatpumpSensor5(SensorEntity):
 
 
 class HeatpumpSensor6(SensorEntity):
+    """Representation of a Sensor."""
+
+    _attr_name = "domestic hot water temperature (setpoint)"
+    _attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS
+    _attr_device_class = SensorDeviceClass.TEMPERATURE
+    _attr_state_class = SensorStateClass.MEASUREMENT
+
+    def update(self) -> None:
+        """Fetch new state data for the sensor.
+
+        This is the only method that should fetch new data for Home Assistant.
+        """
+        self._attr_native_value = 23
+
+
+class network_HeatpumpSensor6(SensorEntity):
     """Representation of a Sensor."""
 
     _attr_name = "domestic hot water temperature (setpoint)"
