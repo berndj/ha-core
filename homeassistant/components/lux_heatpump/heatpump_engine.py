@@ -7,12 +7,8 @@ import time
 class heatpump_engine:
     """Engine talking to the heatpump over ser2net."""
 
-    def __init__(self, sock=None):
+    def __init__(self):
         """Init heatpump connection."""
-        if sock is None:
-            self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        else:
-            self.sock = sock
         self.heating_circuit_flow_temp = 0.0
         self.heating_circuit_return_flow_temp_actual = 0.0
         self.heating_circuit_return_flow_temp_setpoint = 0.0
@@ -22,8 +18,33 @@ class heatpump_engine:
         self.polls = 0
         self.polls_skipped = 0
         self.epoch_time = int(time.time())
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.host = None
         self.port = None
+
+    def maintain_socket(self, host, port):
+        """Check and repair socket."""
+
+        if self.is_socket_closed(self.sock) or port != self.port or host != self.host:
+            self.host = host
+            self.port = port
+            self.sock.close()
+            self.sock = None
+            self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.sock.connect((self.host, self.port))
+
+    def poll_for_stats(self, host, port):
+        """Poll sensor data."""
+
+        new_time = int(time.time())
+        if new_time - self.epoch_time > 5 or self.polls == 0:
+            self.maintain_socket(host, port)
+            self.trigger_stats()
+            self.readlines()
+            self.epoch_time = new_time
+            self.polls += 1
+        else:
+            self.polls_skipped += 1
 
     def is_socket_closed(self, sock: socket.socket) -> bool:
         """Check socket closed state."""
@@ -36,21 +57,14 @@ class heatpump_engine:
             return False  # socket is open and reading from it would block
         except ConnectionResetError:
             return True  # socket was closed for some other reason
+        except Exception:  # noqa: BLE001
+            return False  # socket was closed for some other reason
         return False
 
-    def check_socket(self):
-        """Check and repair socket."""
-
-        if self.is_socket_closed(self.sock):
-            self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.sock.connect((self.host, self.port))
-
-    def connect(self, host, port):
+    def connect(self):
         """Connect to ser2net socket."""
-        self.host = host
-        self.port = port
         try:
-            self.sock.connect((host, port))
+            self.sock.connect((self.host, self.port))
         except ConnectionError:
             # print("Connection Failed")
             return
@@ -64,19 +78,17 @@ class heatpump_engine:
             except TimeoutError:
                 break
             except ConnectionAbortedError:
-                self.reinit()
                 break
             lines = data.split(b"\r\n")
+            if len(data) == 0:
+                break
             for line in lines:
                 self.extract_temp(line)
 
     def trigger_stats(self):
         """Trigger response from heatpump."""
         buf = "1800\n\r"
-        try:
-            self.sock.send(buf.encode(encoding="utf-8"))
-        except ConnectionAbortedError:
-            self.reinit()
+        self.sock.send(buf.encode(encoding="utf-8"))
 
     def extract_temp(self, line):
         """Extract temperature values from response."""
@@ -105,15 +117,45 @@ class heatpump_engine:
             except ValueError:
                 return
 
-    def poll_for_stats(self):
-        """Poll sensor data."""
 
-        new_time = int(time.time())
-        if new_time - self.epoch_time > 10 or self.polls == 0:
-            self.check_socket()
-            self.trigger_stats()
-            self.readlines()
-            self.epoch_time = new_time
-            self.polls += 1
-        else:
-            self.polls_skipped += 1
+# pylint: disable=pointless-string-statement'
+"""
+        def print_sensors(self):
+        print(
+            "=============================================================================="
+        )
+        print()
+        print("Poll=" + str(self.polls) + " Polls_skipped=" + str(self.polls_skipped))
+        print("Outdoor temperature\t\t\t\t\t = %.1f" % (self.outdoor_temp))
+        print()
+        print(
+            "heating circuit flow temperature \t\t\t = %.1f"
+            % (self.heating_circuit_flow_temp)
+        )
+        print(
+            "heating circuit return flow temperature (actual)\t = %.1f"
+            % (self.heating_circuit_return_flow_temp_actual)
+        )
+        print(
+            "heating circuit return flow temperature (setpoint)\t = %.1f"
+            % (self.heating_circuit_return_flow_temp_setpoint)
+        )
+        print(
+            "domestic hot water temperature (actual)\t\t\t = %.1f"
+            % (self.domestic_hot_water_temp_actual)
+        )
+        print(
+            "domestic hot water temperature (setpoint)\t\t = %.1f"
+            % (self.domestic_hot_water_temp_setpoint)
+        )
+"""
+
+my_heatpump_engine = heatpump_engine()
+
+
+if __name__ == "__main__":
+    conn = heatpump_engine()
+    while True:
+        conn.poll_for_stats("baba-cafe", 4322)
+        #        conn.print_sensors()
+        time.sleep(4)
