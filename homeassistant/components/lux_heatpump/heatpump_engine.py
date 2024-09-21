@@ -87,7 +87,8 @@ class heatpump_engine:
 
     def trigger_stats(self):
         """Trigger response from heatpump."""
-        buf = "1800\n\r"
+        # buf = "1800\n\r" # most stats
+        buf = "1100\n\r"  # temperature stats only
         self.sock.send(buf.encode(encoding="utf-8"))
 
     def extract_temp(self, line):
@@ -99,6 +100,8 @@ class heatpump_engine:
             cat1 = int(tokens[0])
             if len(tokens) > 1:
                 cat2 = int(tokens[1])
+            else:
+                return
         except ValueError:
             return
 
