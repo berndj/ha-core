@@ -22,12 +22,17 @@ class heatpump_engine:
         self.host = None
         self.port = None
 
+    def align_peer(self, host, port):
+        """Update host and port information."""
+        if port != self.port or host != self.host:
+            self.host = host
+            self.port = port
+
     def maintain_socket(self, host, port):
         """Check and repair socket."""
 
         if self.is_socket_closed(self.sock) or port != self.port or host != self.host:
-            self.host = host
-            self.port = port
+            self.align_peer(host, port)
             self.sock.close()
             self.sock = None
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
