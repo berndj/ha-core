@@ -105,7 +105,7 @@ class heatpump_engine:
         except ValueError:
             return
 
-        if cat1 == 1100 and cat2 == 12:
+        if cat1 == 1100 and cat2 == 12 and len(tokens) >= 9:
             tokens.pop(0)
             tokens.pop(0)
             #            for token in tokens:

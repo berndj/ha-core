@@ -3476,7 +3476,7 @@
       }
     },
     "lux_heatpump": {
-      "name": "Luxtronik heatpump",
+      "name": "Luxtronik v1 heatpump",
       "integration_type": "hub",
       "config_flow": false,
       "iot_class": "local_polling"

@@ -31,6 +31,10 @@ def setup_platform(
     add_entities([HeatpumpSensor6()])
 
 
+#    my_heatpump_engine.host = str(config["ser2net-host"])
+#    my_heatpump_engine.port = int(config["ser2net-port"])
+
+
 class HeatpumpSensor1(SensorEntity):
     """Representation of a Sensor."""
 
@@ -38,7 +42,7 @@ class HeatpumpSensor1(SensorEntity):
         """Init sensor."""
         self.eng = my_heatpump_engine
 
-    _attr_name = "Outdoor temperature"
+    _attr_name = "luxtronik1 Outdoor temperature"
     _attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS
     _attr_device_class = SensorDeviceClass.TEMPERATURE
     _attr_state_class = SensorStateClass.MEASUREMENT
@@ -59,7 +63,7 @@ class HeatpumpSensor2(SensorEntity):
         """Init sensor."""
         self.eng = my_heatpump_engine
 
-    _attr_name = "heating circuit flow temperature"
+    _attr_name = "luxtronik1 heating circuit flow temperature"
     _attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS
     _attr_device_class = SensorDeviceClass.TEMPERATURE
     _attr_state_class = SensorStateClass.MEASUREMENT
@@ -80,7 +84,7 @@ class HeatpumpSensor3(SensorEntity):
         """Init sensor."""
         self.eng = my_heatpump_engine
 
-    _attr_name = "heating circuit return flow temperature (actual)"
+    _attr_name = "luxtronik1 heating circuit return flow temperature (actual)"
     _attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS
     _attr_device_class = SensorDeviceClass.TEMPERATURE
     _attr_state_class = SensorStateClass.MEASUREMENT
@@ -101,7 +105,7 @@ class HeatpumpSensor4(SensorEntity):
         """Init sensor."""
         self.eng = my_heatpump_engine
 
-    _attr_name = "heating circuit return flow temperature (setpoint)"
+    _attr_name = "luxtronik1 heating circuit return flow temperature (setpoint)"
     _attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS
     _attr_device_class = SensorDeviceClass.TEMPERATURE
     _attr_state_class = SensorStateClass.MEASUREMENT
@@ -122,7 +126,7 @@ class HeatpumpSensor5(SensorEntity):
         """Init sensor."""
         self.eng = my_heatpump_engine
 
-    _attr_name = "domestic hot water temperature (actual)"
+    _attr_name = "luxtronik1 hot water temperature (actual)"
     _attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS
     _attr_device_class = SensorDeviceClass.TEMPERATURE
     _attr_state_class = SensorStateClass.MEASUREMENT
@@ -143,7 +147,7 @@ class HeatpumpSensor6(SensorEntity):
         """Init sensor."""
         self.eng = my_heatpump_engine
 
-    _attr_name = "domestic hot water temperature (setpoint)"
+    _attr_name = "luxtronik1 hot water temperature (setpoint)"
     _attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS
     _attr_device_class = SensorDeviceClass.TEMPERATURE
     _attr_state_class = SensorStateClass.MEASUREMENT
